@@ -1,3 +1,6 @@
-# planner_node:
-#   ros__parameters:
-    
+planner_node:
+  ros__parameters:
+    world_frame: "sim_world"
+    goal_tolerance: 0.5
+    replan_period_ms: 500
+    lethal_cost: 100
