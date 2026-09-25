@@ -10,12 +10,14 @@ PlannerNode::PlannerNode()
   this->declare_parameter<double>("goal_tolerance", 0.5);
   this->declare_parameter<int>("replan_period_ms", 500);
   this->declare_parameter<int>("lethal_cost", 100);
+  this->declare_parameter<double>("cost_weight", 0.05);
 
   world_frame_ = this->get_parameter("world_frame").as_string();
   goal_tolerance_ = this->get_parameter("goal_tolerance").as_double();
   const int replan_period_ms = this->get_parameter("replan_period_ms").as_int();
   planner_.setLethalCost(
       static_cast<int>(this->get_parameter("lethal_cost").as_int()));
+  planner_.setCostWeight(this->get_parameter("cost_weight").as_double());
 
   map_sub_ = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
       "/map", 10, [this](const nav_msgs::msg::OccupancyGrid::SharedPtr msg) {

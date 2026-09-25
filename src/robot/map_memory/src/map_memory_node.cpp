@@ -75,27 +75,28 @@ void MapMemoryNode::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg) {
 void MapMemoryNode::updateMap(int width, int height, double resolution) {
   if (map_memory_.shouldUpdateMap() && map_memory_.costmapUpdated()) {
     map_memory_.integrateCostmap();
-    const auto &grid = this->map_memory_.getGrid();
-    auto occupancy_grid = nav_msgs::msg::OccupancyGrid();
-    occupancy_grid.header.frame_id = "sim_world";
-    occupancy_grid.header.stamp = this->now();
-    occupancy_grid.info.height = height;
-    occupancy_grid.info.width = width;
-    occupancy_grid.info.resolution = resolution;
-    occupancy_grid.info.origin.position.x = this->map_memory_.getOriginX();
-    occupancy_grid.info.origin.position.y = this->map_memory_.getOriginY();
-    occupancy_grid.data.reserve(width * height);
-
-    for (const auto &row : grid) {
-      for (const auto &val : row) {
-        occupancy_grid.data.emplace_back(std::clamp(val, -1, 100));
-      }
-    }
-
-    world_map_pub_->publish(occupancy_grid);
     map_memory_.setShouldUpdateMap(false);
     map_memory_.setCostmapUpdated(false);
   }
+
+  const auto &grid = this->map_memory_.getGrid();
+  auto occupancy_grid = nav_msgs::msg::OccupancyGrid();
+  occupancy_grid.header.frame_id = "sim_world";
+  occupancy_grid.header.stamp = this->now();
+  occupancy_grid.info.height = height;
+  occupancy_grid.info.width = width;
+  occupancy_grid.info.resolution = resolution;
+  occupancy_grid.info.origin.position.x = this->map_memory_.getOriginX();
+  occupancy_grid.info.origin.position.y = this->map_memory_.getOriginY();
+  occupancy_grid.data.reserve(width * height);
+
+  for (const auto &row : grid) {
+    for (const auto &val : row) {
+      occupancy_grid.data.emplace_back(std::clamp(val, -1, 100));
+    }
+  }
+
+  world_map_pub_->publish(occupancy_grid);
 }
 
 int main(int argc, char **argv) {
