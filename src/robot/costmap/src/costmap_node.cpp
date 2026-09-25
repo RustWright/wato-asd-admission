@@ -4,7 +4,7 @@
 #include "costmap_node.hpp"
 
 CostmapNode::CostmapNode()
-    : Node("costmap"), costmap_(robot::CostmapCore(this->get_logger())) {
+    : Node("costmap_node"), costmap_(robot::CostmapCore(this->get_logger())) {
   // Initialize the constructs and their parameters
   this->declare_parameter<double>("resolution", 0.1);
   this->declare_parameter<int>("width", 400);

@@ -1,6 +1,6 @@
 #include "planner_node.hpp"
 
-PlannerNode::PlannerNode() : Node("planner"), planner_(robot::PlannerCore(this->get_logger())) {}
+PlannerNode::PlannerNode() : Node("planner_node"), planner_(robot::PlannerCore(this->get_logger())) {}
 
 int main(int argc, char ** argv)
 {
