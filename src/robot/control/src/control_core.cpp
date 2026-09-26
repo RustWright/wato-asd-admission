@@ -1,12 +1,11 @@
 #include "control_core.hpp"
 #include <cmath>
+#include <optional>
 #include <utility>
 
-namespace robot
-{
+namespace robot {
 
-ControlCore::ControlCore(const rclcpp::Logger& logger)
-  : logger_(logger) {}
+ControlCore::ControlCore(const rclcpp::Logger &logger) : logger_(logger) {}
 
 void ControlCore::initialize(double lookahead_distance, double goal_tolerance,
                              double linear_speed) {
@@ -30,31 +29,45 @@ bool ControlCore::goalReached(double robot_x, double robot_y) const {
   return (dx * dx + dy * dy) < (goal_tolerance_ * goal_tolerance_);
 }
 
-std::optional<std::pair<double, double>> ControlCore::findLookaheadPoint(
-    double robot_x, double robot_y) const {
-  // TODO(efe): walk path_ and return the first point at least
-  // lookahead_distance_ away from the robot, or the last point when none is.
-  (void)robot_x;
-  (void)robot_y;
-  return std::nullopt;
+std::optional<std::pair<double, double>>
+ControlCore::findLookaheadPoint(double robot_x, double robot_y) const {
+
+  for (auto point : path_) {
+    double distance =
+        std::sqrt((point.first - robot_x) * (point.first - robot_x) +
+                  (point.second - robot_y) * (point.second - robot_y));
+    if (distance >= lookahead_distance_) {
+      return point;
+    }
+  }
+
+  if (path_.empty()) {
+    return std::nullopt;
+  }
+
+  return path_.back();
 }
 
 bool ControlCore::computeVelocity(double robot_x, double robot_y,
                                   double robot_yaw, double &linear_out,
                                   double &angular_out) {
-  linear_out = 0.0;
-  angular_out = 0.0;
 
-  // TODO(efe): Pure Pursuit.
-  //
-  // 1. target = findLookaheadPoint(robot_x, robot_y); bail if nullopt.
-  // 2. Express the target in the robot frame (inverse of the map_memory
-  //    rotation, since that went robot frame -> world).
-  // 3. Turn its lateral offset into the curvature of the arc from the robot
-  //    through the target.
-  // 4. linear_out from linear_speed_; angular_out from speed and curvature.
-  (void)robot_yaw;
+  std::optional<std::pair<double, double>> target =
+      findLookaheadPoint(robot_x, robot_y);
+  if (target.has_value()) {
+    double cos_yaw = std::cos(robot_yaw);
+    double sin_yaw = std::sin(robot_yaw);
+    double dx = target.value().first - robot_x;
+    double dy = target.value().second - robot_y;
+    double cross = -dx * sin_yaw + dy * cos_yaw;
+    const double distance = std::hypot(dx, dy);
+    const double radius = distance * distance / (2 * cross);
+    linear_out = linear_speed_;
+    angular_out = linear_speed_ / radius;
+    return true;
+  }
+
   return false;
 }
 
-}  // namespace robot
+} // namespace robot
