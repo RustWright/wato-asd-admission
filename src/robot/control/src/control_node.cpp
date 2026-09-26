@@ -9,10 +9,10 @@
 
 ControlNode::ControlNode()
     : Node("control_node"), control_(robot::ControlCore(this->get_logger())) {
-  this->declare_parameter<double>("lookahead_distance", 1.0);
+  this->declare_parameter<double>("lookahead_distance", 1.4);
   this->declare_parameter<double>("goal_tolerance", 0.1);
-  this->declare_parameter<double>("linear_speed", 0.5);
-  this->declare_parameter<double>("max_angular_speed", 1.5);
+  this->declare_parameter<double>("linear_speed", 0.8);
+  this->declare_parameter<double>("max_angular_speed", 2.0);
   this->declare_parameter<int>("control_period_ms", 100);
 
   control_.initialize(this->get_parameter("lookahead_distance").as_double(),

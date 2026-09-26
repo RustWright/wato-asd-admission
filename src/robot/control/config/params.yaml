@@ -1,7 +1,7 @@
 control_node:
   ros__parameters:
-    lookahead_distance: 1.0
+    lookahead_distance: 1.4
     goal_tolerance: 0.1
-    linear_speed: 0.5
-    max_angular_speed: 1.5
+    linear_speed: 0.8
+    max_angular_speed: 2.0
     control_period_ms: 100

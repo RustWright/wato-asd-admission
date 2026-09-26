@@ -9,7 +9,7 @@ CostmapNode::CostmapNode()
   this->declare_parameter<double>("resolution", 0.1);
   this->declare_parameter<int>("width", 400);
   this->declare_parameter<int>("height", 400);
-  this->declare_parameter<double>("inflation_radius", 0.5);
+  this->declare_parameter<double>("inflation_radius", 1.0);
   this->declare_parameter<int>("max_cost", 100);
 
   double resolution = this->get_parameter("resolution").as_double();
