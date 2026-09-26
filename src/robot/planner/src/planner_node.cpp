@@ -10,7 +10,7 @@ PlannerNode::PlannerNode()
   this->declare_parameter<double>("goal_tolerance", 0.5);
   this->declare_parameter<int>("replan_period_ms", 500);
   this->declare_parameter<int>("lethal_cost", 100);
-  this->declare_parameter<double>("cost_weight", 0.05);
+  this->declare_parameter<double>("cost_weight", 0.15);
 
   world_frame_ = this->get_parameter("world_frame").as_string();
   goal_tolerance_ = this->get_parameter("goal_tolerance").as_double();
